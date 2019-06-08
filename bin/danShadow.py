@@ -17,8 +17,6 @@ USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Fi
 # The overarching product types
 PRODUCT_TYPES = ["spirits", "white wine",
                  "champagne-sparkling", "whisky", "red wine", "beer", "cider"]
-# Products that have been introduced in error
-DISALLOWED_PRODUCTS = ["TASTING, BITTERS", "GIFT"]
 
 # What identifies as a 'single' or a 'case'
 SINGLE_KEYS = ["BOTTLE", "PACK", "EACH", "CAN", "CASK"]
@@ -32,7 +30,6 @@ REQ_ADDITIONAL_DETAILS = ["producttitle", "webliquorsize",
                           "standarddrinks", "image1"]
 
 # File locations
-ERROR_LOG = "logs/danppss_error.log"
 TEST_DB = "data/testDB.db"
 PROD_DATABASE = "data/danDB.db"
 
@@ -57,15 +54,11 @@ if args.verbose:
     logger.setLevel(logging.DEBUG)
 else:
     logger.setLevel(logging.INFO)
-errorHandler = logging.FileHandler(ERROR_LOG)
-errorHandler.setLevel(logging.ERROR)
 debugHandler = logging.StreamHandler()
 debugHandler.setLevel(logging.DEBUG)
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-errorHandler.setFormatter(formatter)
 debugHandler.setFormatter(formatter)
-logger.addHandler(errorHandler)
 logger.addHandler(debugHandler)
 
 class MLStripper(HTMLParser):
@@ -109,21 +102,7 @@ def testFields(product):
     if set(REQ_ADDITIONAL_DETAILS).issubset([detail["Name"] for detail in additionalDetails]):
         # If the product contains neccessary basic information
         if set(REQ_FIELDS).issubset(list(product.keys())):
-            # If the product is purchasable
-            if (product["IsPurchasable"] and (product["IsForCollection"] or product["IsForDelivery"])):
-                # If the product is disallowed
-                if not (product["Stockcode"] in DISALLOWED_PRODUCTS):
-                    for dissallowed in DISALLOWED_PRODUCTS:
-                        if dissallowed in product["Description"]:
-                            logger.debug("Product is dissallowed, disregarding {}".format(product["Description"]))
-                            return False
-                    return True
-                else:
-                    logger.debug("Product is dissallowed, disregarding {}".format(product["Description"]))
-                    return False
-            else:
-                logger.debug("Product is non-purchasable, disregarding {}".format(product["Description"]))
-                return False
+            return True
         else:
             logger.debug("Product has not all basic attributes, disregarding {}".format(product["Description"]))
             return False
