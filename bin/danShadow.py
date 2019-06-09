@@ -26,8 +26,10 @@ ACCEPTABLE_RATIO = 3.5
 # All the required fields we must gather to make meaningful conclusions
 REQ_FIELDS = ["Stockcode", "Prices", "UrlFriendlyName",
               "AdditionalDetails", "AvailablePackTypes"]
-REQ_ADDITIONAL_DETAILS = ["producttitle", "webliquorsize",
+REQ_ADDITIONAL_DETAILS = ["producttitle",
                           "standarddrinks", "image1"]
+#Dissallowed products
+DISSALLOWED = ["GIFT PACK", "TASTING PACK"]
 
 # File locations
 TEST_DB = "data/testDB.db"
@@ -102,7 +104,20 @@ def testFields(product):
     if set(REQ_ADDITIONAL_DETAILS).issubset([detail["Name"] for detail in additionalDetails]):
         # If the product contains neccessary basic information
         if set(REQ_FIELDS).issubset(list(product.keys())):
-            return True
+            if("Inventory" in product and "availableinventoryqty" in product["Inventory"]):
+                if(product["Inventory"]["availableinventoryqty"] > 0):
+                    # If the product type is dissallowed
+                    if not any(dis in product["Description"].upper() for dis in DISSALLOWED):
+                        return True
+                    else:
+                        logger.debug("Product is disallowed, disregarding {}".format(product["Description"]))
+                        return False
+                else:
+                    logger.debug("Product has no inventory, disregarding {}".format(product["Description"]))
+                    return False
+            else:
+                logger.debug("Product has no inventory, disregarding {}".format(product["Description"]))
+                return False
         else:
             logger.debug("Product has not all basic attributes, disregarding {}".format(product["Description"]))
             return False
@@ -164,6 +179,8 @@ def buildProductFromData(product, department):
             usefulProduct["ReviewCount"] = int(detail["Value"])
         elif detail["Name"] == "webdescriptionshort":
             usefulProduct["Description"] = detail["Value"]
+        elif detail["Name"] == "webliquorsize":
+            usefulProduct["webliquorsize"] = detail["Value"]
     
     # Set the flag for if the product comes from the supplier
     if "ER_" in usefulProduct["Stockcode"]:
