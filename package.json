@@ -1,13 +1,13 @@
 {
-  "name": "danppss",
+  "name": "dmps",
   "version": "1.0.0",
-  "description": "",
-  "main": "theGrogonator.js",
+  "description": "Categorise and sort Dan Murphy's by price per standard",
+  "main": "danPriceSorter.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "James Fox",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",

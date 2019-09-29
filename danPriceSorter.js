@@ -142,21 +142,22 @@ app.get("/search", (req, res)=>{
     }
 })
 
-app.get("/updated/", (req,res)=>{
+app.get("/updated", (req,res)=>{
     res.send(lastUpdated)
 })
 
 const server = app.listen(PORT, () => {
-    console.log(`The Grogonator API Listening On ${PORT}!`)
-})
-
-const updateDatabase = schedule.scheduleJob("6 * * *",function(){
-    const databaseUpdater = spawn("python3",["bin/danShadow.py"])
-    console.log("Updating database...")
-    databaseUpdater.stderr.on("data", (data)=>{
-        console.error("Database updater has failed!")
+    var lastUpdated = 0
+    console.log(`Dan Price Sorter API Listening On ${PORT}!`)
+    // Start the auto-updater
+    const updateDatabase = schedule.scheduleJob("6 * * *",function(){
+        const databaseUpdater = spawn("python3",["bin/danShadow.py"])
+        console.log("Updating database...")
+        databaseUpdater.stderr.on("data", ()=>{
+            console.error("Database updater has failed!")
+        })
+        lastUpdated = Math.floor(new Date() / 1000)
     })
-    lastUpdated = Math.floor(new Date() / 1000)
 })
 
 process.on("SIGTERM", () => {
