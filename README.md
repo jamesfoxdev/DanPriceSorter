@@ -39,7 +39,7 @@ A Dan Murphy's product is comprised of these columns
 Endpoints that return products will return a JSON array comprised of a series of product objects (with the above specifications)
 
 ## API Endpoints
-### `/category/:category`
+### `POST /category/:category`
 Gives an array of products matching a certain category. These categories are:
 - spirits
 - white wine
@@ -56,7 +56,7 @@ The query payload should contain two fields
 |Allow external suppliers to populate results|`externSupplier`|`boolean`|
 |The page number to return|`page`|`uint`|
 
-### `/top`
+### `POST /top`
 Returns an array of products sorted by price per standard drink. The query payload should contain two fields:
 
 |Description|Field|Data Type|
@@ -64,7 +64,7 @@ Returns an array of products sorted by price per standard drink. The query paylo
 |Allow external suppliers to populate results|`externSupplier`|`boolean`|
 |The page number to return|`page`|`uint`|
 
-### `/search`
+### `POST /search`
 Return a list of products matching a search query. The query payload should contain three fields:
 
 |Description|Field|Data Type|
@@ -73,8 +73,8 @@ Return a list of products matching a search query. The query payload should cont
 |Allow external suppliers to populate results|`externSupplier`|`boolean`|
 |The page number to return|`page`|`uint`|
 
-### `/updated`
+### `GET /updated`
 Returns a UNIX timestamp of when the listings were last updated
 
-### `/`
+### `GET /`
 Returns how many products are in the database and when it was last updated
