@@ -50,6 +50,7 @@ Gives an array of products matching a certain category. These categories are:
 - cider
 
 The query payload should contain two fields
+
 |Description|Field|Data Type|
 |--|--|--|
 |Allow external suppliers to populate results|`externSupplier`|`boolean`|
